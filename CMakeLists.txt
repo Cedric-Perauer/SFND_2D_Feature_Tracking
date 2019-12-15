@@ -4,13 +4,9 @@ add_definitions(-std=c++11)
 
 set(CXX_FLAGS "-Wall")
 set(CMAKE_CXX_FLAGS, "${CXX_FLAGS}")
-<<<<<<< HEAD
 set(CMAKE_BUILD_TYPE Release)
 set(CMAKE_CXX_FLAGS_RELEASE "-Ofast")
-set(OpenCV_DIR /home/cedric/Downloads/opencv_4.1/opencv/build)
-=======
 
->>>>>>> 71003a7c9c2f3092361f59224fe05b71e559f4f6
 
 project(camera_fusion)
 
