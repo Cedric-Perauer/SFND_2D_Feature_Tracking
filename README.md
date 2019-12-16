@@ -32,3 +32,26 @@ See the classroom instruction and code comments for more details on each of thes
 2. Make a build directory in the top level directory: `mkdir build && cd build`
 3. Compile: `cmake .. && make`
 4. Run it: `./2D_feature_tracking`.
+
+# Performance Evaluation
+
+## MP6 
+- For Perforamnce Stats look at the folder data/ it's in the data.csv file 
+- For images look at the folder data/images
+- knn matching was used with k=2 as the selectorType and the matcher type was set to MAT_BF
+
+## MP7 
+### Both total points and points within the ROI were counted for each detector type 
+- The most matching points were found with : 
+1. FAST (approx. 400 per image pair)
+2. BRISK (254-297 per image pair)
+
+- The fewest matching points were found with : 
+1. HARRIS (always less than 100 per image pair)
+2. ORB and SHITOMASI (both were around the 100-130 range for an image pair)
+
+## MP9
+- FAST was mostly the fastest detector (about 1-2 ms) while also producing the most matches 
+- the descriptors BRIEF (1ms), ORB (1ms) and SIFT(about 10-11 ms) all performed pretty well and all offer real time Performance when combined with FAST
+- Therefore the first 3 options therfore are BRIEF, ORB and SIFT descriptors combined with a FAST detector 
+- SIFT however should be avoided for a commercial application if possible due to the patent that goes along with it, this does not pose a problem in the project though 
