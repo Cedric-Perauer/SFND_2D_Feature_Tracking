@@ -7,47 +7,84 @@ using namespace std;
 void matchDescriptors(std::vector<cv::KeyPoint> &kPtsSource, std::vector<cv::KeyPoint> &kPtsRef, cv::Mat &descSource, cv::Mat &descRef,
                       std::vector<cv::DMatch> &matches, std::string descriptorType, std::string matcherType, std::string selectorType)
 {
-    // configure matcher
     bool crossCheck = false;
     cv::Ptr<cv::DescriptorMatcher> matcher;
 
+    // Brute force
     if (matcherType.compare("MAT_BF") == 0)
     {
-        int normType = descriptorType.compare("DES_BINARY") == 0 ? cv::NORM_HAMMING : cv::NORM_L2;
+        int normType;
+
+        // with SIFT
+        if (descriptorType.compare("DES_HOG") == 0)
+        {
+            normType = cv::NORM_L2;
+        }
+
+            // with all other binary descriptors
+        else if (descriptorType.compare("DES_BINARY") == 0)
+        {
+            normType = cv::NORM_HAMMING;
+        }
+
+        else {
+            throw invalid_argument(descriptorType + " is not a valid descriptorCategory");
+        }
+
         matcher = cv::BFMatcher::create(normType, crossCheck);
     }
+
+        // FLANN matching
     else if (matcherType.compare("MAT_FLANN") == 0)
     {
-        if (descSource.type() != CV_32F || descRef.type() != CV_32F )
-        { // OpenCV bug workaround : convert binary descriptors to floating point due to a bug in current OpenCV implementation
-            descSource.convertTo(descSource, CV_32F);
-            descRef.convertTo(descRef, CV_32F);
+        // with SIFT
+        if (descriptorType.compare("DES_HOG") == 0)
+        {
+            matcher = cv::FlannBasedMatcher::create();
         }
-        matcher = cv::DescriptorMatcher::create(cv::DescriptorMatcher::FLANNBASED);
+
+            // with all other binary descriptorTypes
+        else if (descriptorType.compare("DES_BINARY") == 0)
+        {
+            const cv::Ptr<cv::flann::IndexParams>& indexParams = cv::makePtr<cv::flann::LshIndexParams>(12, 20, 2);
+            matcher = cv::makePtr<cv::FlannBasedMatcher>(indexParams);
+        }
+
+        else {
+            throw invalid_argument(descriptorType + " is not a valid descriptorCategory");
+        }
     }
 
-    // perform matching task
-    if (selectorType.compare("SEL_NN") == 0)
-    { // nearest neighbor (best match)
-        matcher->match(descSource, descRef, matches); // Finds the best match for each descriptor in desc1
+    else {
+        throw invalid_argument(matcherType + " is not a valid matcherType");
     }
+
+    // Perform nearest neighbor matching (best match)
+    if (selectorType.compare("SEL_NN") == 0)
+    {   if((kPtsRef.size()>=2 && kPtsSource.size()>=2) && (descSource.type()==descRef.type()) && (descSource.cols == descRef.cols))
+        {matcher->match(descSource, descRef, matches);}
+    }
+
+        // Perform k nearest neighbors (k=2)
     else if (selectorType.compare("SEL_KNN") == 0)
-    { // k nearest neighbors (k=2)
+    {
+        int k = 2;
         vector<vector<cv::DMatch>> knn_matches;
-        if(kPtsSource.size()>=2 && kPtsRef.size()>=2)
-            matcher->knnMatch(descSource, descRef, knn_matches, 2);
-        //-- Filter matches using the Lowe's ratio test
-        float ratio_thresh = 0.8;
-        double t = (double)cv::getTickCount();
-        for (size_t i = 0; i < knn_matches.size(); i++)
-        {
-            if (knn_matches[i][0].distance < ratio_thresh * knn_matches[i][1].distance)
-            {
-                matches.push_back(knn_matches[i][0]);
+        if(kPtsRef.size()>=2 && kPtsSource.size()>=2 && (descSource.type()==descRef.type()) && (descSource.cols == descRef.cols)  )
+        {matcher->knnMatch(descSource, descRef, knn_matches, k);}
+
+        // Filter matches using descriptor distance ratio test
+        double minDescDistRatio = 0.8;
+        for (auto it : knn_matches) {
+            // The returned knn_matches vector contains some nested vectors with size < 2 !?
+            if ( 2 == it.size() && (it[0].distance < minDescDistRatio * it[1].distance)) {
+                matches.push_back(it[0]);
             }
         }
-        t = ((double)cv::getTickCount() - t) / cv::getTickFrequency();
-        cout << " (KNN) with n=" << matches.size() << " matches in " << 1000 * t / 1.0 << " ms" << endl;
+    }
+
+    else {
+        throw invalid_argument(selectorType + " is not a valid selectorType");
     }
 }
 
@@ -210,7 +247,7 @@ void detKeypointsHarris(std::vector<cv::KeyPoint> &keypoints, cv::Mat &img, bool
 }
 
 
-void detKeypointsModern(std::vector<cv::KeyPoint> &keypoints, cv::Mat &img, const std::string &detectorType, bool bVis)
+void detKeypointsModern(std::vector<cv::KeyPoint> &keypoints, cv::Mat &img, std::string &detectorType, bool bVis)
 {
 
     double t = (double)cv::getTickCount();

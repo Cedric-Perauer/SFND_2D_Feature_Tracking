@@ -35,24 +35,25 @@ int main(int argc, const char *argv[])
     int imgStartIndex = 0; // first file index to load (assumes Lidar and camera names have identical naming convention)
     int imgEndIndex = 9;   // last file index to load
     int imgFillWidth = 4;  // no. of digits which make up the file index (e.g. img-0001.png)
-    std::string filename = "/home/cedric/SFND_2D_Tracking/data/data.csv";
-    std::ofstream output_stream(filename, std::ios::binary);
+    cv::Mat matchImg;
+    //std::string filename = "/home/cedric/SFND_2D_Tracking/data/data.csv";
+    //std::ofstream output_stream(filename, std::ios::binary);
 
 
-    if (!output_stream.is_open()) {
-        std::cerr << "failed to open file: " << filename << std::endl;
-        return EXIT_FAILURE;
-    }
+//    if (!output_stream.is_open()) {
+//        std::cerr << "failed to open file: " << filename << std::endl;
+//        return EXIT_FAILURE;
+//    }
 
     // write CSV header row
-    output_stream << "Detector Type" << ","
+  /*  output_stream << "Detector Type" << ","
                   << "Descriptor Type" << ","
                   << "Frame#" << ","
                   << "#KeyPointsPerFrame" << ","
                   << "#KeyPointsPerROI" << ","
                   << "DetectorTime(ms)" << ","
                   << "DescriptorTime(ms)" << ","
-                  << "#MatchedPoints" << "," << "MatchingTime(ms))" << std::endl;
+                  << "#MatchedPoints" << "," << "MatchingTime(ms))" << std::endl;*/
     // misc
     int dataBufferSize = 2;       // no. of images which are held in memory (ring buffer) at the same time
     deque<DataFrame> ring_buffer;
@@ -160,6 +161,7 @@ int main(int argc, const char *argv[])
                         string desc = "DES_BINARY"; // DES_BINARY, DES_HOG
                         if(descriptorType == "SIFT")
                             desc = "DES_HOG";
+                        std::cout << desc << endl;
                         string selectorType = "SEL_KNN";       // SEL_NN, SEL_KNN
 
                         //// STUDENT ASSIGNMENT
@@ -177,25 +179,26 @@ int main(int argc, const char *argv[])
 
                         num_matches = matches.size();
                         // visualize matches between current and previous image
-                        bVis = false;
+                        bVis = true;
+
                         if (bVis) {
-                            cv::Mat matchImg = ((ring_buffer.end() - 1)->cameraImg).clone();
+                            matchImg = ((ring_buffer.end() - 1)->cameraImg).clone();
                             cv::drawMatches((ring_buffer.end() - 2)->cameraImg, (ring_buffer.end() - 2)->keypoints,
                                             (ring_buffer.end() - 1)->cameraImg, (ring_buffer.end() - 1)->keypoints,
                                             matches, matchImg,
                                             cv::Scalar::all(-1), cv::Scalar::all(-1),
                                             vector<char>(), cv::DrawMatchesFlags::DRAW_RICH_KEYPOINTS);
 
-                            string windowName = "Matching keypoints between two camera images";
-                            cv::namedWindow(windowName, 7);
-                            cv::imshow(windowName, matchImg);
-                            cout << "Press key to continue to next image" << endl;
-                            cv::waitKey(0); // wait for key to be pressed
+                            //string windowName = "Matching keypoints between two camera images";
+                            //cv::namedWindow(windowName, 7);
+                            //cv::imshow(windowName, matchImg);
+                            //cout << "Press key to continue to next image" << endl;
+                            //cv::waitKey(0); // wait for key to be pressed
                         }
                         bVis = false;
                     }
 
-                   /* if(num_matches < 0)
+                   /*if(imgIndex == 0)
                         num_matches = 0;
                     detector_t = (1000 * detector_t/1.0);
                     descriptor_t = (1000 * descriptor_t/1.0);
@@ -208,14 +211,16 @@ int main(int argc, const char *argv[])
                                   << "," << std::fixed << std::setprecision(8) << detector_t
                                   << "," << std::fixed << std::setprecision(8) << descriptor_t
                                   << "," << num_matches
-                                  << "," << std::fixed << std::setprecision(8) << match_t << std::endl;
-*/
+                                  << "," << std::fixed << std::setprecision(8) << match_t << std::endl;*/
+                    std::string file_name = detectorType + descriptorType + to_string(imgIndex) +".png";
+                    cv::imwrite("images/"+file_name, matchImg);
+
                 } // eof loop over all images
-                output_stream << std::endl;
+              //  output_stream << std::endl;
             }
         }
     }
-    output_stream.close();
+  //  output_stream.close();
 
     return 0;
 }
