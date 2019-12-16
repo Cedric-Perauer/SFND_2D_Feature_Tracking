@@ -7,7 +7,7 @@ set(CMAKE_CXX_FLAGS, "${CXX_FLAGS}")
 
 set(CMAKE_BUILD_TYPE Release)
 set(CMAKE_CXX_FLAGS_RELEASE "-Ofast")
-set(OpenCV_DIR /home/cedric/Downloads/opencv_4.1/opencv/build)
+#set(OpenCV_DIR /home/cedric/Downloads/opencv_4.1/opencv/build)
 
 
 project(camera_fusion)

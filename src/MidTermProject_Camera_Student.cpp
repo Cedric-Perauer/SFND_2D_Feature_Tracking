@@ -40,13 +40,13 @@ int main(int argc, const char *argv[])
     //std::ofstream output_stream(filename, std::ios::binary);
 
 
-//    if (!output_stream.is_open()) {
-//        std::cerr << "failed to open file: " << filename << std::endl;
-//        return EXIT_FAILURE;
-//    }
+   /* if (!output_stream.is_open()) {
+        std::cerr << "failed to open file: " << filename << std::endl;
+        return EXIT_FAILURE;
+    }*/
 
     // write CSV header row
-  /*  output_stream << "Detector Type" << ","
+ /* output_stream << "Detector Type" << ","
                   << "Descriptor Type" << ","
                   << "Frame#" << ","
                   << "#KeyPointsPerFrame" << ","
@@ -198,7 +198,7 @@ int main(int argc, const char *argv[])
                         bVis = false;
                     }
 
-                   /*if(imgIndex == 0)
+                  /* if(imgIndex == 0)
                         num_matches = 0;
                     detector_t = (1000 * detector_t/1.0);
                     descriptor_t = (1000 * descriptor_t/1.0);
@@ -211,16 +211,16 @@ int main(int argc, const char *argv[])
                                   << "," << std::fixed << std::setprecision(8) << detector_t
                                   << "," << std::fixed << std::setprecision(8) << descriptor_t
                                   << "," << num_matches
-                                  << "," << std::fixed << std::setprecision(8) << match_t << std::endl;*/
+                                  << "," << std::fixed << std::setprecision(8) << match_t << std::endl;
                     std::string file_name = detectorType + descriptorType + to_string(imgIndex) +".png";
-                    cv::imwrite("images/"+file_name, matchImg);
+                    cv::imwrite("/home/cedric/SFND_2D_Tracking/data/images/"+file_name, matchImg);*/
 
                 } // eof loop over all images
-              //  output_stream << std::endl;
+           //   output_stream << std::endl;
             }
         }
     }
-  //  output_stream.close();
+  //output_stream.close();
 
     return 0;
 }

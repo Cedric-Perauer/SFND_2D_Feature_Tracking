@@ -1,3 +1,0 @@
-/home/cedric/SFND_2D_Tracking/build/CMakeFiles/rebuild_cache.dir
-/home/cedric/SFND_2D_Tracking/build/CMakeFiles/2D_feature_tracking.dir
-/home/cedric/SFND_2D_Tracking/build/CMakeFiles/edit_cache.dir
