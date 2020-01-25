@@ -55,3 +55,7 @@ See the classroom instruction and code comments for more details on each of thes
 - the descriptors BRIEF (1ms), ORB (1ms) and SIFT(about 10-11 ms) all performed pretty well and all offer real time Performance when combined with FAST
 - Therefore the first 3 options therfore are BRIEF, ORB and SIFT descriptors combined with a FAST detector 
 - SIFT however should be avoided for a commercial application if possible due to the patent that goes along with it, this does not pose a problem in the project though 
+
+# Good to know
++ check out [Roman's Github Gist](https://gist.github.com/roman-smirnov/a46f6096787987a96927e05352363cc7) in order to easily track the performance via CSV Files 
+
